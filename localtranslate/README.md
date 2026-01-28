@@ -1,4 +1,4 @@
-# LocalTranslate
+# [LocalTranslate](https://github.com/PierrunoYT/localtranslate)
 
 A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma 12B** for professional-quality translation that runs entirely on your machine.
 
@@ -59,8 +59,8 @@ This downloads the model (~8.1GB) and starts Ollama. The first download may take
 ### 3. Install LocalTranslate
 
 ```bash
-git clone <repository-url>
-cd LocalTranslate/localtranslate
+git clone https://github.com/PierrunoYT/localtranslate
+cd localtranslate/localtranslate
 npm install
 ```
 
@@ -290,7 +290,7 @@ Contributions are welcome! Areas for improvement:
 - Custom terminology/glossaries
 - UI/UX enhancements
 
-Please feel free to submit a Pull Request.
+Please feel free to submit a [Pull Request](https://github.com/PierrunoYT/localtranslate/pulls).
 
 ## Version History
 
@@ -309,6 +309,7 @@ TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.de
 
 ## Resources
 
+- [GitHub Repository](https://github.com/PierrunoYT/localtranslate)
 - [TranslateGemma Model](https://ollama.com/library/translategemma)
 - [Ollama Documentation](https://docs.ollama.com)
 - [Setup Guide](../SETUP_GUIDE.md)
