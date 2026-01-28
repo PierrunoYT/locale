@@ -303,7 +303,7 @@ See [CHANGELOG.md](localtranslate/CHANGELOG.md) for detailed release notes.
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.dev/gemma/terms).
 
