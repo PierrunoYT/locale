@@ -37,6 +37,11 @@ body {
   background-color: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .app-header h1 {
@@ -44,6 +49,31 @@ body {
   font-weight: 600;
   color: #0f0f0f;
   margin: 0;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-badge.connected {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.disconnected {
+  background-color: #ffebee;
+  color: #c62828;
 }
 
 .translation-panel {
@@ -172,6 +202,63 @@ body {
   background-color: #244a9a;
 }
 
+.translate-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.error-message strong {
+  font-weight: 600;
+}
+
+.error-message pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.retry-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #856404;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+}
+
+.retry-button:hover {
+  background-color: #ffc107;
+  color: #fff;
+}
+
+.lang-select:disabled,
+.swap-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.text-input:disabled,
+.text-output:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
@@ -189,6 +276,33 @@ body {
 
   .app-header h1 {
     color: #f6f6f6;
+  }
+
+  .status-badge.connected {
+    background-color: #1b5e20;
+    color: #a5d6a7;
+  }
+
+  .status-badge.disconnected {
+    background-color: #b71c1c;
+    color: #ef9a9a;
+  }
+
+  .error-message {
+    background-color: #3a3a00;
+    border-color: #ffc107;
+    color: #ffe082;
+  }
+
+  .retry-button {
+    background-color: #2a2a2a;
+    border-color: #ffc107;
+    color: #ffe082;
+  }
+
+  .retry-button:hover {
+    background-color: #ffc107;
+    color: #1a1a1a;
   }
 
   .lang-select,

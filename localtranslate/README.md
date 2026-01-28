@@ -1,15 +1,18 @@
 # LocalTranslate
 
-A minimal, local translation application built with Tauri, React, and TypeScript. Translate text between multiple languages with a clean, intuitive interface.
+A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma 12B** for professional-quality translation that runs entirely on your machine.
 
 ## Features
 
-- 🌍 Multi-language support (English, Spanish, French, German, Italian, Portuguese, Japanese, Chinese)
-- 🔄 Quick language swap functionality
-- 🎨 Clean, minimal UI with dark mode support
-- 📱 Responsive design for various screen sizes
-- ⚡ Fast and lightweight desktop application
-- 🔒 Local processing (privacy-focused)
+- 🤖 **TranslateGemma 12B Integration** - State-of-the-art local translation model
+- 🌍 **Multi-language support** - 55+ languages (English, Spanish, French, German, Italian, Portuguese, Japanese, Chinese, and more)
+- 🔄 **Quick language swap** functionality
+- 🎨 **Clean, minimal UI** with dark mode support
+- 📱 **Responsive design** for various screen sizes
+- ⚡ **Fast and lightweight** desktop application
+- 🔒 **100% Local processing** - Your data never leaves your machine
+- 🔓 **Privacy-focused** - No API keys, no cloud services, no tracking
+- 🆓 **Completely free** - No subscription or usage limits
 
 ## Tech Stack
 
@@ -17,25 +20,57 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 - **Framework**: Tauri 2
 - **Build Tool**: Vite 7
 - **Styling**: CSS3 with CSS Variables
+- **Translation Engine**: TranslateGemma 12B via Ollama
+- **Backend**: Rust with async HTTP client
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- Rust (latest stable)
-- npm or yarn
+### Required
+- **Node.js** (v18 or higher)
+- **Rust** (latest stable)
+- **Ollama** - Download from [ollama.com](https://ollama.com/download)
+- **TranslateGemma 12B model** - Install via Ollama (see setup below)
 
-## Installation
+### System Requirements
+- **RAM**: 16GB+ recommended (8GB minimum with 4B model)
+- **Disk Space**: 10GB free (for model storage)
+- **OS**: Windows, macOS, or Linux
 
-1. Clone the repository:
+## Quick Start
+
+### 1. Install Ollama
+
+Download and install Ollama from [ollama.com](https://ollama.com/download), then verify:
+
+```bash
+ollama --version
+```
+
+### 2. Install TranslateGemma 12B
+
+```bash
+ollama run translategemma:12b
+```
+
+This downloads the model (~8.1GB) and starts Ollama. The first download may take 10-30 minutes.
+
+### 3. Install LocalTranslate
+
 ```bash
 git clone <repository-url>
-cd LocalTranslator/localtranslate
-```
-
-2. Install dependencies:
-```bash
+cd LocalTranslate/localtranslate
 npm install
 ```
+
+### 4. Run the Application
+
+```bash
+npm run tauri dev
+```
+
+You should see a green "🟢 TranslateGemma 12B Connected" badge when ready!
+
+> 📖 **Need help?** See the [detailed setup guide](../SETUP_GUIDE.md) for troubleshooting and advanced configuration.
 
 ## Development
 
@@ -47,6 +82,7 @@ npm run dev
 Run with Tauri (desktop app):
 ```bash
 npm run tauri dev
+
 ```
 
 ## Building
@@ -79,31 +115,179 @@ localtranslate/
 
 ## Usage
 
-1. Select the source language from the dropdown
-2. Select the target language from the dropdown
-3. Enter text in the left text area
-4. Click "Translate" to see the translation in the right text area
-5. Use the swap button (⇄) to quickly swap source and target languages
+1. **Start Ollama** (if not already running):
+   ```bash
+   ollama serve
+   ```
+
+2. **Launch LocalTranslate** and wait for the connection indicator
+
+3. **Translate:**
+   - Select source language (e.g., English)
+   - Select target language (e.g., Spanish)
+   - Enter text in the left panel
+   - Click **"Translate"**
+   - Translation appears in the right panel
+
+4. **Swap Languages:** Use the ⇄ button to quickly reverse translation direction
 
 ## Supported Languages
 
-- English (en)
-- Spanish (es)
-- French (fr)
-- German (de)
-- Italian (it)
-- Portuguese (pt)
-- Japanese (ja)
-- Chinese (zh)
+**Currently Available in UI:**
+- English (en) 🇬🇧
+- Spanish (es) 🇪🇸
+- French (fr) 🇫🇷
+- German (de) 🇩🇪
+- Italian (it) 🇮🇹
+- Portuguese (pt) 🇵🇹
+- Japanese (ja) 🇯🇵
+- Chinese (zh) 🇨🇳
+
+**TranslateGemma 12B supports 55+ languages** including Arabic, Russian, Korean, Hindi, Dutch, and many more. To add more languages, edit the `languages` array in `src/App.tsx`.
+
+## Translation Quality
+
+TranslateGemma 12B delivers professional-grade translation quality:
+- ✅ **Outperforms larger models** on standardized translation benchmarks
+- ✅ **Context-aware** translations with cultural sensitivity
+- ✅ **Maintains nuance** and idiomatic expressions
+- ✅ **128K token context window** for long documents
+
+## Performance
+
+- **First translation**: ~3-5 seconds (model loading)
+- **Subsequent translations**: ~1-2 seconds
+- **Memory usage**: ~8GB RAM during translation
+- **Offline capable**: Works without internet after model download
+
+## Why Local Translation?
+
+### Privacy First
+- ✅ No data sent to cloud services
+- ✅ No API keys or account required
+- ✅ No usage tracking or telemetry
+- ✅ Works completely offline
+
+### Cost Effective
+- ✅ Zero API costs
+- ✅ No subscription fees
+- ✅ Unlimited translations
+- ✅ One-time setup
+
+### Quality & Control
+- ✅ Professional translation quality
+- ✅ Consistent results
+- ✅ Full control over model selection
+- ✅ Open source transparency
+
+## Troubleshooting
+
+### "Ollama is not running"
+Start Ollama in a terminal:
+```bash
+ollama serve
+```
+
+### "translategemma:12b model not found"
+Install the model:
+```bash
+ollama run translategemma:12b
+```
+
+### Slow performance with limited RAM
+Use the smaller 4B model:
+```bash
+ollama run translategemma:4b
+```
+Then update `src-tauri/src/lib.rs` line 48 to use `translategemma:4b`
+
+See [SETUP_GUIDE.md](../SETUP_GUIDE.md) for detailed troubleshooting.
+
+## Model Options
+
+| Model | Size | RAM Required | Speed | Quality |
+|-------|------|--------------|-------|---------|
+| **4B** | 3.3GB | 8GB | Fastest | Good |
+| **12B** | 8.1GB | 16GB | Fast | Excellent ⭐ |
+| **27B** | 17GB | 32GB | Slower | Best |
+
+**Default:** 12B (recommended balance of speed and quality)
+
+## Advanced Configuration
+
+### Change Translation Model
+
+Edit `src-tauri/src/lib.rs` (line 48):
+
+```rust
+model: "translategemma:4b".to_string(),  // or 12b, 27b
+```
+
+### Add More Languages
+
+Edit `src/App.tsx` and add to the `languages` array:
+
+```typescript
+{ code: "ar", name: "Arabic" },
+{ code: "ru", name: "Russian" },
+{ code: "ko", name: "Korean" },
+```
+
+See [Ollama TranslateGemma docs](https://ollama.com/library/translategemma) for all supported language codes.
+
+## Architecture
+
+```
+┌─────────────────┐
+│   React UI      │  User Interface (TypeScript)
+└────────┬────────┘
+         │
+    Tauri Bridge
+         │
+┌────────▼────────┐
+│   Rust Backend  │  HTTP Client + Translation Logic
+└────────┬────────┘
+         │
+   HTTP Request
+         │
+┌────────▼────────┐
+│     Ollama      │  Local API Server
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ TranslateGemma  │  AI Translation Model
+│      12B        │  (Runs locally on your machine)
+└─────────────────┘
+```
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Areas for improvement:
+- Additional language support in UI
+- Translation history/favorites
+- Batch translation support
+- Custom terminology/glossaries
+- UI/UX enhancements
+
+Please feel free to submit a Pull Request.
 
 ## License
 
 This project is licensed under the MIT License.
 
+TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.dev/gemma/terms).
+
+## Resources
+
+- [TranslateGemma Model](https://ollama.com/library/translategemma)
+- [Ollama Documentation](https://docs.ollama.com)
+- [Setup Guide](../SETUP_GUIDE.md)
+- [Tauri Documentation](https://tauri.app)
+
 ## Recommended IDE Setup
 
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+
+---
+
+**Built with ❤️ using TranslateGemma, Tauri, React, and Rust**

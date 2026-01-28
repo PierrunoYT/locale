@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 
 function App() {
@@ -6,6 +7,9 @@ function App() {
   const [translatedText, setTranslatedText] = useState("");
   const [sourceLang, setSourceLang] = useState("en");
   const [targetLang, setTargetLang] = useState("es");
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [ollamaStatus, setOllamaStatus] = useState<string | null>(null);
 
   const languages = [
     { code: "en", name: "English" },
@@ -18,9 +22,53 @@ function App() {
     { code: "zh", name: "Chinese" },
   ];
 
-  const handleTranslate = () => {
-    // Mock translation - replace with actual translation logic
-    setTranslatedText(`[Translated from ${sourceLang} to ${targetLang}]\n${sourceText}`);
+  // Check Ollama status on component mount
+  useEffect(() => {
+    checkOllamaStatus();
+  }, []);
+
+  const checkOllamaStatus = async () => {
+    try {
+      await invoke("check_ollama_status");
+      setOllamaStatus("connected");
+      setError(null);
+    } catch (err) {
+      setOllamaStatus("disconnected");
+      setError(
+        "⚠️ Ollama is not running. Please start Ollama and ensure TranslateGemma 12B is installed.\n\nTo install: ollama run translategemma:12b"
+      );
+    }
+  };
+
+  const handleTranslate = async () => {
+    if (!sourceText.trim()) {
+      setError("Please enter some text to translate");
+      return;
+    }
+
+    if (sourceLang === targetLang) {
+      setError("Source and target languages must be different");
+      return;
+    }
+
+    setIsTranslating(true);
+    setError(null);
+    setTranslatedText("");
+
+    try {
+      const result = await invoke<string>("translate_text", {
+        sourceLang,
+        targetLang,
+        text: sourceText,
+      });
+      setTranslatedText(result);
+      setOllamaStatus("connected");
+    } catch (err) {
+      setError(err as string);
+      setOllamaStatus("disconnected");
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   const handleSwapLanguages = () => {
@@ -36,6 +84,18 @@ function App() {
     <main className="app-container">
       <header className="app-header">
         <h1>LocalTranslate</h1>
+        <div className="status-indicator">
+          {ollamaStatus === "connected" && (
+            <span className="status-badge connected">
+              🟢 TranslateGemma 12B Connected
+            </span>
+          )}
+          {ollamaStatus === "disconnected" && (
+            <span className="status-badge disconnected">
+              🔴 Ollama Disconnected
+            </span>
+          )}
+        </div>
       </header>
 
       <div className="translation-panel">
@@ -44,6 +104,7 @@ function App() {
             value={sourceLang}
             onChange={(e) => setSourceLang(e.target.value)}
             className="lang-select"
+            disabled={isTranslating}
           >
             {languages.map((lang) => (
               <option key={lang.code} value={lang.code}>
@@ -56,6 +117,7 @@ function App() {
             onClick={handleSwapLanguages}
             className="swap-button"
             title="Swap languages"
+            disabled={isTranslating}
           >
             ⇄
           </button>
@@ -64,6 +126,7 @@ function App() {
             value={targetLang}
             onChange={(e) => setTargetLang(e.target.value)}
             className="lang-select"
+            disabled={isTranslating}
           >
             {languages.map((lang) => (
               <option key={lang.code} value={lang.code}>
@@ -73,6 +136,21 @@ function App() {
           </select>
         </div>
 
+        {error && (
+          <div className="error-message">
+            <strong>Error:</strong>
+            <pre>{error}</pre>
+            {ollamaStatus === "disconnected" && (
+              <button
+                onClick={checkOllamaStatus}
+                className="retry-button"
+              >
+                Retry Connection
+              </button>
+            )}
+          </div>
+        )}
+
         <div className="translation-area">
           <div className="text-area-container">
             <textarea
@@ -80,6 +158,7 @@ function App() {
               placeholder="Enter text to translate..."
               value={sourceText}
               onChange={(e) => setSourceText(e.target.value)}
+              disabled={isTranslating}
             />
           </div>
 
@@ -87,14 +166,22 @@ function App() {
             <textarea
               className="text-output"
               placeholder="Translation will appear here..."
-              value={translatedText}
+              value={
+                isTranslating
+                  ? "Translating with TranslateGemma 12B..."
+                  : translatedText
+              }
               readOnly
             />
           </div>
         </div>
 
-        <button onClick={handleTranslate} className="translate-button">
-          Translate
+        <button
+          onClick={handleTranslate}
+          className="translate-button"
+          disabled={isTranslating || !sourceText.trim()}
+        >
+          {isTranslating ? "Translating..." : "Translate"}
         </button>
       </div>
     </main>
