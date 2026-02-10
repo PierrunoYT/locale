@@ -124,7 +124,7 @@ function App() {
             <pre>{error}</pre>
             {ollamaStatus === "disconnected" && (
               <button
-                onClick={checkOllamaStatus}
+                onClick={() => checkOllamaStatus()}
                 className="retry-button"
               >
                 Retry Connection
