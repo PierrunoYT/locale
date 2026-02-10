@@ -1,6 +1,6 @@
 [package]
 name = "locale"
-version = "0.1.1"
+version = "0.1.2"
 description = "Locale - A local translation application"
 authors = ["you"]
 edition = "2021"

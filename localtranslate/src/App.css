@@ -440,12 +440,18 @@ body {
   background: rgba(239, 68, 68, 0.2);
 }
 
+.translation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 0;
+}
+
 .translation-area {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  flex: 1;
-  min-height: 320px;
+  min-height: 560px;
 }
 
 .text-area-wrapper {
@@ -463,6 +469,7 @@ body {
 .text-area-container {
   display: flex;
   flex-direction: column;
+  min-height: 360px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -478,12 +485,13 @@ body {
 .text-input,
 .text-output {
   flex: 1;
+  min-height: 360px;
   padding: 1rem 1.25rem;
   border: none;
   outline: none;
   font-size: 0.9375rem;
   font-family: inherit;
-  resize: none;
+  resize: vertical;
   background: transparent;
   color: var(--text-primary);
   line-height: 1.65;
@@ -499,7 +507,7 @@ body {
 }
 
 .translate-button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   border: none;
   border-radius: var(--radius-md);
   background: var(--accent);
@@ -509,8 +517,9 @@ body {
   cursor: pointer;
   transition: all var(--transition);
   outline: none;
+  width: 100%;
+  max-width: 400px;
   align-self: center;
-  min-width: 140px;
 }
 
 .translate-button:hover:not(:disabled) {
@@ -587,7 +596,12 @@ body {
 @media (max-width: 768px) {
   .translation-area {
     grid-template-columns: 1fr;
-    min-height: 240px;
+    min-height: 520px;
+  }
+
+  .translate-button {
+    max-width: none;
+    width: 100%;
   }
 
   .translation-panel {

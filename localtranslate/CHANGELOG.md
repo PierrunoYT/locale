@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-02-10
+
+### Changed
+- **Larger text fields** - Increased default size and added vertical resize support
+- **Translate button** - Moved directly under the text fields with responsive full-width layout on mobile
+
 ## [0.1.1] - 2026-02-10
 
 ### Added
@@ -94,5 +100,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Works completely offline
 - ✅ Open source and transparent
 
+[0.1.2]: https://github.com/PierrunoYT/localtranslate/releases/tag/v0.1.2
 [0.1.1]: https://github.com/PierrunoYT/localtranslate/releases/tag/v0.1.1
 [0.1.0]: https://github.com/PierrunoYT/localtranslate/releases/tag/v0.1.0

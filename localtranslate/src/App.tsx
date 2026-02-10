@@ -145,48 +145,50 @@ function App() {
           </div>
         )}
 
-        <div className="translation-area">
-          <div className="text-area-wrapper">
-            <span className="text-area-label">
-              {LANGUAGES.find((l) => l.code === sourceLang)?.name ?? sourceLang}
-            </span>
-            <div className="text-area-container">
-              <textarea
-                className="text-input"
-                placeholder="Enter text to translate..."
-                value={sourceText}
-                onChange={(e) => setSourceText(e.target.value)}
-                disabled={isTranslating}
-              />
+        <div className="translation-section">
+          <div className="translation-area">
+            <div className="text-area-wrapper">
+              <span className="text-area-label">
+                {LANGUAGES.find((l) => l.code === sourceLang)?.name ?? sourceLang}
+              </span>
+              <div className="text-area-container">
+                <textarea
+                  className="text-input"
+                  placeholder="Enter text to translate..."
+                  value={sourceText}
+                  onChange={(e) => setSourceText(e.target.value)}
+                  disabled={isTranslating}
+                />
+              </div>
+            </div>
+
+            <div className="text-area-wrapper">
+              <span className="text-area-label">
+                {LANGUAGES.find((l) => l.code === targetLang)?.name ?? targetLang}
+              </span>
+              <div className="text-area-container">
+                <textarea
+                  className="text-output"
+                  placeholder="Translation will appear here..."
+                  value={
+                    isTranslating
+                      ? "Translating with TranslateGemma 12B..."
+                      : translatedText
+                  }
+                  readOnly
+                />
+              </div>
             </div>
           </div>
 
-          <div className="text-area-wrapper">
-            <span className="text-area-label">
-              {LANGUAGES.find((l) => l.code === targetLang)?.name ?? targetLang}
-            </span>
-            <div className="text-area-container">
-              <textarea
-                className="text-output"
-                placeholder="Translation will appear here..."
-                value={
-                  isTranslating
-                    ? "Translating with TranslateGemma 12B..."
-                    : translatedText
-                }
-                readOnly
-              />
-            </div>
-          </div>
+          <button
+            onClick={handleTranslate}
+            className="translate-button"
+            disabled={isTranslating || !sourceText.trim()}
+          >
+            {isTranslating ? "Translating..." : "Translate"}
+          </button>
         </div>
-
-        <button
-          onClick={handleTranslate}
-          className="translate-button"
-          disabled={isTranslating || !sourceText.trim()}
-        >
-          {isTranslating ? "Translating..." : "Translate"}
-        </button>
       </div>
 
       {showInfo && (

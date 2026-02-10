@@ -2,7 +2,7 @@
 
 A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma 12B** for professional-quality translation that runs entirely on your machine.
 
-**Version**: 0.1.0 | **Status**: Production Ready | **License**: MIT
+**Version**: 0.1.2 | **Status**: Production Ready | **License**: MIT
 
 ## Features
 
@@ -12,7 +12,7 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 - 🟢 **Live connection status** - Status badge updates every 30s and when you return to the app
 - ℹ️ **How it works** - Info button in the header with a quick guide
 - 🎨 **Modern UI** - Dark-first design with Plus Jakarta Sans, emerald accents, and light mode support
-- 📱 **Responsive design** for various screen sizes
+- 📱 **Responsive design** - Resizable text fields, translate button adapts to screen size
 - ⚡ **Fast and lightweight** desktop application
 - 🔒 **100% Local processing** - Your data never leaves your machine
 - 🔓 **Privacy-focused** - No API keys, no cloud services, no tracking
