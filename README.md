@@ -10,6 +10,7 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 - 🌍 **120+ languages** - Full TranslateGemma support with searchable language selector
 - 🔄 **Quick language swap** functionality
 - 🟢 **Live connection status** - Status badge updates every 30s and when you return to the app
+- ℹ️ **How it works** - Info button in the header with a quick guide
 - 🎨 **Modern UI** - Dark-first design with Plus Jakarta Sans, emerald accents, and light mode support
 - 📱 **Responsive design** for various screen sizes
 - ⚡ **Fast and lightweight** desktop application
@@ -136,7 +137,7 @@ localtranslate/
 
 2. **Launch Locale** and wait for the connection indicator (updates every 30s and when you return to the app)
 
-3. **Translate:**
+3. **Translate:** (click the ℹ️ button in the header for a "How it works" guide)
    - Click a language button to open the searchable dropdown
    - Search by name or code (e.g., "spanish", "ja", "arabic")
    - Select source and target languages

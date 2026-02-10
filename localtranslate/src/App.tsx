@@ -12,6 +12,7 @@ function App() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ollamaStatus, setOllamaStatus] = useState<string | null>(null);
+  const [showInfo, setShowInfo] = useState(false);
 
   const checkOllamaStatus = async (silent = false) => {
     try {
@@ -79,7 +80,18 @@ function App() {
   return (
     <main className="app-container">
       <header className="app-header">
-        <h1>Locale</h1>
+        <div className="header-left">
+          <h1>Locale</h1>
+          <button
+            type="button"
+            className="info-button"
+            onClick={() => setShowInfo(true)}
+            title="How it works"
+            aria-label="How it works"
+          >
+            ℹ
+          </button>
+        </div>
         <div className="status-indicator">
           {ollamaStatus === "connected" && (
             <span className="status-badge connected">
@@ -176,6 +188,46 @@ function App() {
           {isTranslating ? "Translating..." : "Translate"}
         </button>
       </div>
+
+      {showInfo && (
+        <div className="info-overlay" onClick={() => setShowInfo(false)}>
+          <div className="info-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="info-modal-header">
+              <h2>How Locale Works</h2>
+              <button
+                type="button"
+                className="info-close"
+                onClick={() => setShowInfo(false)}
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+            <div className="info-modal-body">
+              <h3>Prerequisites</h3>
+              <p>Locale runs translation entirely on your machine using:</p>
+              <ul>
+                <li><strong>Ollama</strong> – local AI runtime (install from ollama.com)</li>
+                <li><strong>TranslateGemma 12B</strong> – run <code>ollama run translategemma:12b</code> to install</li>
+              </ul>
+
+              <h3>Using Locale</h3>
+              <ol>
+                <li>Select source and target languages from the dropdowns (search by name or code)</li>
+                <li>Enter text in the left panel</li>
+                <li>Click <strong>Translate</strong></li>
+                <li>Translation appears in the right panel</li>
+              </ol>
+
+              <h3>Connection Status</h3>
+              <p>The green badge means Ollama is running and TranslateGemma is ready. If it shows disconnected, start Ollama with <code>ollama serve</code> and ensure the model is installed.</p>
+
+              <h3>Privacy</h3>
+              <p>All translation happens locally. Your text never leaves your machine.</p>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
