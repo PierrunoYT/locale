@@ -22,22 +22,28 @@ function App() {
     { code: "zh", name: "Chinese" },
   ];
 
-  // Check Ollama status on component mount
-  useEffect(() => {
-    checkOllamaStatus();
-  }, []);
-
-  const checkOllamaStatus = async () => {
+  const checkOllamaStatus = async (silent = false) => {
     try {
-      const message = await invoke<string>("check_ollama_status");
+      await invoke<string>("check_ollama_status");
       setOllamaStatus("connected");
-      setError(null);
-      console.log(message); // Log success message
+      if (!silent) setError(null);
     } catch (err) {
       setOllamaStatus("disconnected");
-      setError(err as string);
+      if (!silent) setError(err as string);
     }
   };
+
+  // Check on mount, periodically (every 30s), and when window regains focus
+  useEffect(() => {
+    checkOllamaStatus();
+    const interval = setInterval(() => checkOllamaStatus(true), 30_000);
+    const onFocus = () => checkOllamaStatus(true);
+    window.addEventListener("focus", onFocus);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, []);
 
   const handleTranslate = async () => {
     if (!sourceText.trim()) {
