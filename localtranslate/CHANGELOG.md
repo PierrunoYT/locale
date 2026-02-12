@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Enhanced info modal** - Now displays all three TranslateGemma models (4B, 12B, 27B) with installation commands for each
 - **Improved help button** - Info button now shows "Help" text alongside the info icon for better discoverability
 - **Quick troubleshooting section** - Added dedicated troubleshooting commands in the help modal (ollama serve, ollama ps, ollama list)
+- **App screenshot** - Added visual showcase in README to demonstrate the UI
+- **Updated documentation** - README and SETUP_GUIDE now accurately reflect v0.1.4 features with runtime model switching
 
 ### Changed
 - **Three-state connection status** - Status badge now distinguishes between:

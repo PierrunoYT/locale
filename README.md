@@ -4,6 +4,8 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 
 **Version**: 0.1.4 | **Status**: Production Ready | **License**: MIT
 
+![Locale App Screenshot](assets/app-screenshot.png)
+
 ## Features
 
 - 🤖 **Runtime model switch** - Choose TranslateGemma 4B, 12B, or 27B directly in the UI
@@ -72,7 +74,10 @@ npm install
 npm run tauri:dev
 ```
 
-You should see a green "<selected model> Connected" badge when ready.
+You should see a status badge indicating the model state:
+- 🟢 **Running** - Model is loaded and ready
+- 🟠 **Installed (Idle)** - Model is installed but not loaded
+- 🔴 **Disconnected** - Ollama is not running
 
 > 📖 **Need help?** See the [detailed setup guide](SETUP_GUIDE.md) for troubleshooting and advanced configuration.
 
@@ -137,7 +142,8 @@ localtranslate/
 
 2. **Launch Locale** and wait for the connection indicator (updates every 30s and when you return to the app)
 
-3. **Translate:** (click the ℹ️ button in the header for a "How it works" guide)
+3. **Translate:** (click the ℹ️ **Help** button in the header for a complete guide)
+   - Select a model from the **Model** dropdown (4B/12B/27B)
    - Click a language button to open the searchable dropdown
    - Search by name or code (e.g., "spanish", "ja", "arabic")
    - Select source and target languages
