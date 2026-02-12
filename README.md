@@ -2,7 +2,7 @@
 
 A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma** (4B/12B/27B) for professional-quality translation that runs entirely on your machine.
 
-**Version**: 0.1.3 | **Status**: Production Ready | **License**: MIT
+**Version**: 0.1.4 | **Status**: Production Ready | **License**: MIT
 
 ## Features
 
@@ -286,10 +286,10 @@ Please feel free to submit a [Pull Request](https://github.com/PierrunoYT/localt
 
 See [CHANGELOG.md](localtranslate/CHANGELOG.md) for detailed release notes.
 
-**Current Version**: 0.1.3 (2026-02-12)
-- Runtime model switcher for TranslateGemma 4B/12B/27B
-- Saved model preference and dynamic model-aware status/error messaging
-- Continued local, privacy-focused translation experience
+**Current Version**: 0.1.4 (2026-02-12)
+- Enhanced three-state connection status (Running/Installed/Disconnected)
+- Improved info modal showing all available models with installation commands
+- Better help discoverability with dedicated troubleshooting section
 
 ## License
 
