@@ -45,3 +45,6 @@ Thumbs.db
 *.tmp
 *.temp
 *~
+
+# Release notes (used for GitHub releases only)
+RELEASE_*.md

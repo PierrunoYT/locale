@@ -5,9 +5,9 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PierrunoYT/localtranslate.git"
+    "url": "https://github.com/PierrunoYT/locale.git"
   },
-  "homepage": "https://github.com/PierrunoYT/localtranslate",
+  "homepage": "https://github.com/PierrunoYT/locale",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

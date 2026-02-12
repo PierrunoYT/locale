@@ -23,7 +23,7 @@ ollama run translategemma:12b  # ~8GB download
 
 **3. Clone and Install Dependencies**
 ```bash
-git clone https://github.com/PierrunoYT/localtranslate
+git clone https://github.com/PierrunoYT/locale
 cd localtranslate/localtranslate
 npm install
 ```
