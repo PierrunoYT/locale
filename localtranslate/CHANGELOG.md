@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **HTTP timeouts** - Configured 120s timeout for translations, 10s for status checks
 - **Language code validation** - Whitelist validation against 120+ supported language codes
 - **Error message sanitization** - Production builds hide internal error details
-- **Request throttling** - Mutex lock prevents concurrent translation requests
+- **Request throttling** - Async mutex lock prevents concurrent translation requests
 - **Configurable Ollama URL** - Support for `OLLAMA_URL` environment variable
 
 ### Changed
@@ -23,10 +23,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Error handling** - Clear error state when switching models for better UX
 - **localStorage safety** - Added try-catch error handling for localStorage operations
 
+### Fixed
+- **Async mutex compatibility** - Use `tokio::sync::Mutex` instead of `std::sync::Mutex` for proper async/await support in Tauri commands
+
 ### Documentation
 - Added BUGS.md with comprehensive security analysis
 - Updated README with security features section
 - Updated SETUP_GUIDE with environment variable configuration
+
+### Tooling
+- Added create-release.ps1 PowerShell script for automated GitHub releases
 
 ## [0.1.4] - 2026-02-12
 

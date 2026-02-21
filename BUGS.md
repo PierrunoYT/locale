@@ -110,17 +110,25 @@ Called in `translate_text` before building the prompt.
 #### 6. No Rate Limiting - FIXED
 **File**: `localtranslate/src-tauri/src/lib.rs`  
 
-**Fix Applied**: Added mutex lock to prevent concurrent translations:
+**Fix Applied**: Added async mutex lock to prevent concurrent translations:
 ```rust
-static TRANSLATION_LOCK: Mutex<()> = Mutex::new(());
+use tokio::sync::Mutex;
+use std::sync::OnceLock;
+
+static TRANSLATION_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+fn get_translation_lock() -> &'static Mutex<()> {
+    TRANSLATION_LOCK.get_or_init(|| Mutex::new(()))
+}
 
 #[tauri::command]
 async fn translate_text(...) -> Result<String, String> {
-    let _lock = TRANSLATION_LOCK.lock()
-        .map_err(|_| "Translation already in progress".to_string())?;
+    let _lock = get_translation_lock().lock().await;
     // ... rest of function
 }
 ```
+
+**Note**: Uses `tokio::sync::Mutex` for async compatibility (required for Tauri commands).
 
 ---
 
