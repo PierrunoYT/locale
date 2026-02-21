@@ -76,8 +76,10 @@ npm run tauri:dev
 
 You should see a status badge indicating the model state:
 - 🟢 **Running** - Model is loaded and ready
-- 🟠 **Installed (Idle)** - Model is installed but not loaded
+- 🟠 **Installed (Idle)** - Model is installed but not loaded (will auto-load on first translation)
 - 🔴 **Disconnected** - Ollama is not running
+
+> **Note:** The app works in both "Running" and "Installed (Idle)" states. When idle, the first translation takes 3-5 seconds as Ollama loads the model into memory, then subsequent translations are fast (~1-2 seconds).
 
 > 📖 **Need help?** See the [detailed setup guide](SETUP_GUIDE.md) for troubleshooting and advanced configuration.
 
