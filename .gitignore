@@ -48,3 +48,8 @@ Thumbs.db
 
 # Release notes (used for GitHub releases only)
 RELEASE_*.md
+
+# Release management scripts (local tools only)
+create-release.ps1
+clean-release-assets.ps1
+remove-all-releases.ps1
