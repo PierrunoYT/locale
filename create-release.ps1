@@ -60,6 +60,13 @@ if ($status -and -not $DryRun) {
 
 # Build the application
 if (-not $SkipBuild) {
+    Write-Info "`nCleaning old build artifacts..."
+    $bundleDir = "localtranslate/src-tauri/target/release/bundle"
+    if (Test-Path $bundleDir) {
+        Remove-Item $bundleDir -Recurse -Force
+        Write-Success "Old build artifacts removed"
+    }
+    
     Write-Info "`nBuilding application..."
     Push-Location "localtranslate"
     
@@ -76,6 +83,7 @@ if (-not $SkipBuild) {
     Write-Success "Build completed successfully!"
 } else {
     Write-Warning "Skipping build (--SkipBuild flag set)"
+    Write-Warning "Using existing installers - make sure they are for the correct version!"
 }
 
 # Find installer files
