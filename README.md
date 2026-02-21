@@ -180,13 +180,22 @@ TranslateGemma 12B delivers professional-grade translation quality:
 - **Memory usage**: ~8GB RAM during translation
 - **Offline capable**: Works without internet after model download
 
-## Why Local Translation?
+## Security & Privacy
 
 ### Privacy First
 - ✅ No data sent to cloud services
 - ✅ No API keys or account required
 - ✅ No usage tracking or telemetry
 - ✅ Works completely offline
+- ✅ No external dependencies (uses system fonts)
+
+### Security Features
+- ✅ Content Security Policy enabled
+- ✅ Input validation (100KB max text length)
+- ✅ HTTP request timeouts configured
+- ✅ Language code whitelist validation
+- ✅ Request throttling (one translation at a time)
+- ✅ Sanitized error messages in production
 
 ### Cost Effective
 - ✅ Zero API costs
@@ -199,6 +208,19 @@ TranslateGemma 12B delivers professional-grade translation quality:
 - ✅ Consistent results
 - ✅ Full control over model selection
 - ✅ Open source transparency
+
+## Advanced Configuration
+
+### Environment Variables
+
+**OLLAMA_URL** - Override the default Ollama API endpoint:
+```bash
+# Default: http://localhost:11434
+export OLLAMA_URL="http://192.168.1.100:11434"
+npm run tauri:dev
+```
+
+This allows connecting to Ollama running on a different machine or port.
 
 ## Troubleshooting
 
@@ -239,8 +261,6 @@ See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed troubleshooting.
 
 **Default:** 4B (fastest and most accessible)
 
-## Advanced Configuration
-
 ### Change Translation Model
 
 Use the **Model** dropdown above the language selectors to switch between:
@@ -253,6 +273,8 @@ Your selection is saved locally and reused when you reopen the app.
 ### Add More Languages
 
 Edit `src/languages.ts` to add or modify languages. The app includes all 120+ TranslateGemma-supported languages by default. See [Ollama TranslateGemma docs](https://ollama.com/library/translategemma) for the full list of supported language codes.
+
+**Note**: If adding custom language codes, you must also update the `VALID_LANGUAGE_CODES` whitelist in `src-tauri/src/lib.rs` for security.
 
 ## Architecture
 

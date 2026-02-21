@@ -1,7 +1,30 @@
 use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+use std::time::Duration;
 
 const DEFAULT_MODEL: &str = "translategemma:4b";
 const SUPPORTED_MODELS: [&str; 3] = ["translategemma:4b", "translategemma:12b", "translategemma:27b"];
+const MAX_TEXT_LENGTH: usize = 100_000;
+const HTTP_TIMEOUT_SECS: u64 = 120;
+
+static TRANSLATION_LOCK: Mutex<()> = Mutex::new(());
+
+const VALID_LANGUAGE_CODES: &[&str] = &[
+    "aa", "ab", "af", "ak", "am", "an", "ar", "as", "az", "ba", "be", "bg", "bm", "bn", "bo", "br",
+    "bs", "ca", "ce", "co", "cs", "cv", "cy", "da", "de", "dv", "dz", "ee", "el", "en", "eo", "es",
+    "et", "eu", "fa", "ff", "fi", "fo", "fr", "fy", "ga", "gd", "gl", "gn", "gu", "ha", "he", "hi",
+    "hr", "ht", "hu", "hy", "id", "ig", "is", "it", "ja", "jv", "ka", "ki", "kk", "kl", "km", "kn",
+    "ko", "ks", "ku", "kw", "ky", "la", "lb", "lg", "ln", "lo", "lt", "lu", "lv", "mg", "mi", "mk",
+    "ml", "mn", "mr", "ms", "mt", "my", "nb", "nd", "ne", "nl", "nn", "no", "nr", "nv", "ny", "oc",
+    "om", "or", "os", "pa", "pl", "ps", "pt", "qu", "rm", "rn", "ro", "ru", "rw", "sa", "sc", "sd",
+    "se", "sg", "si", "sk", "sl", "sn", "so", "sq", "sr", "ss", "st", "su", "sv", "sw", "ta", "te",
+    "tg", "th", "ti", "tk", "tl", "tn", "to", "tr", "ts", "tt", "ug", "uk", "ur", "uz", "ve", "vi",
+    "vo", "wa", "wo", "xh", "yi", "yo", "za", "zh", "zh-Hans", "zh-Hant", "zu",
+];
+
+fn get_ollama_url() -> String {
+    std::env::var("OLLAMA_URL").unwrap_or_else(|_| "http://localhost:11434".to_string())
+}
 
 fn resolve_model(model: Option<String>) -> Result<String, String> {
     let requested_model = model
@@ -18,6 +41,14 @@ fn resolve_model(model: Option<String>) -> Result<String, String> {
             requested_model,
             SUPPORTED_MODELS.join(", ")
         ))
+    }
+}
+
+fn validate_language_code(code: &str) -> Result<(), String> {
+    if VALID_LANGUAGE_CODES.contains(&code) {
+        Ok(())
+    } else {
+        Err(format!("Invalid language code: {}", code))
     }
 }
 
@@ -218,16 +249,27 @@ async fn translate_text(
     text: String,
     model: Option<String>,
 ) -> Result<String, String> {
+    let _lock = TRANSLATION_LOCK.lock().map_err(|_| "Translation already in progress".to_string())?;
+
     if text.trim().is_empty() {
         return Err("Text cannot be empty".to_string());
     }
 
+    if text.len() > MAX_TEXT_LENGTH {
+        return Err(format!(
+            "Text too long. Maximum length is {} characters ({} provided).",
+            MAX_TEXT_LENGTH,
+            text.len()
+        ));
+    }
+
+    validate_language_code(&source_lang)?;
+    validate_language_code(&target_lang)?;
+
     let selected_model = resolve_model(model)?;
 
-    // Build the prompt using TranslateGemma's required format
     let prompt = build_translation_prompt(&source_lang, &target_lang, &text);
 
-    // Create the request to Ollama API
     let request_body = OllamaRequest {
         model: selected_model.clone(),
         messages: vec![OllamaMessage {
@@ -237,17 +279,28 @@ async fn translate_text(
         stream: false,
     };
 
-    // Send request to Ollama
-    let client = reqwest::Client::new();
+    let ollama_url = get_ollama_url();
+    let client = reqwest::Client::builder()
+        .timeout(Duration::from_secs(HTTP_TIMEOUT_SECS))
+        .build()
+        .map_err(|_| "Failed to create HTTP client".to_string())?;
+
     let response = client
-        .post("http://localhost:11434/api/chat")
+        .post(format!("{}/api/chat", ollama_url))
         .json(&request_body)
         .send()
         .await
         .map_err(|e| {
-            format!(
+            #[cfg(debug_assertions)]
+            return format!(
                 "Failed to connect to Ollama. Please ensure Ollama is running and '{}' is installed.\nError: {}",
                 selected_model, e
+            );
+            
+            #[cfg(not(debug_assertions))]
+            format!(
+                "Failed to connect to Ollama. Please ensure Ollama is running and '{}' is installed.",
+                selected_model
             )
         })?;
 
@@ -259,8 +312,8 @@ async fn translate_text(
         ));
     }
 
-    let ollama_response: OllamaResponse = response.json().await.map_err(|e| {
-        format!("Failed to parse Ollama response: {}", e)
+    let ollama_response: OllamaResponse = response.json().await.map_err(|_| {
+        "Failed to parse Ollama response".to_string()
     })?;
 
     Ok(ollama_response.message.content)
@@ -284,16 +337,18 @@ struct OllamaModel {
 #[tauri::command]
 async fn check_ollama_status(model: Option<String>) -> Result<String, String> {
     let selected_model = resolve_model(model)?;
-    let client = reqwest::Client::new();
+    let ollama_url = get_ollama_url();
+    let client = reqwest::Client::builder()
+        .timeout(Duration::from_secs(10))
+        .build()
+        .map_err(|_| "Failed to create HTTP client".to_string())?;
     
-    // Check if Ollama is running
     let response = client
-        .get("http://localhost:11434/api/tags")
+        .get(format!("{}/api/tags", ollama_url))
         .send()
         .await
         .map_err(|_| "Ollama is not running. Please start Ollama with: ollama serve".to_string())?;
 
-    // Check if the model is installed
     let tags: OllamaTagsResponse = response
         .json()
         .await
@@ -310,8 +365,7 @@ async fn check_ollama_status(model: Option<String>) -> Result<String, String> {
             selected_model, selected_model
         ))
     } else {
-        // Distinguish "installed" from "actively running in memory"
-        let model_running = match client.get("http://localhost:11434/api/ps").send().await {
+        let model_running = match client.get(format!("{}/api/ps", ollama_url)).send().await {
             Ok(ps_response) => match ps_response.json::<OllamaPsResponse>().await {
                 Ok(ps) => ps.models.iter().any(|m| m.name.starts_with(&selected_model)),
                 Err(_) => false,

@@ -21,10 +21,14 @@ function App() {
   const [sourceLang, setSourceLang] = useState("en");
   const [targetLang, setTargetLang] = useState("es");
   const [selectedModel, setSelectedModel] = useState<string>(() => {
-    const savedModel = localStorage.getItem("locale.selectedModel");
-    return MODEL_OPTIONS.some((option) => option.value === savedModel)
-      ? (savedModel as string)
-      : DEFAULT_MODEL;
+    try {
+      const savedModel = localStorage.getItem("locale.selectedModel");
+      return MODEL_OPTIONS.some((option) => option.value === savedModel)
+        ? (savedModel as string)
+        : DEFAULT_MODEL;
+    } catch {
+      return DEFAULT_MODEL;
+    }
   });
   const [isTranslating, setIsTranslating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -51,6 +55,7 @@ function App() {
   };
 
   useEffect(() => {
+    setError(null);
     checkOllamaStatus(false, selectedModel);
     const interval = setInterval(() => checkOllamaStatus(true), 30_000);
     const onFocus = () => checkOllamaStatus(true);
@@ -62,7 +67,11 @@ function App() {
   }, [selectedModel]);
 
   useEffect(() => {
-    localStorage.setItem("locale.selectedModel", selectedModel);
+    try {
+      localStorage.setItem("locale.selectedModel", selectedModel);
+    } catch (e) {
+      console.error("Failed to save model preference:", e);
+    }
   }, [selectedModel]);
 
   const handleTranslate = async () => {

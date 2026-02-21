@@ -207,6 +207,22 @@ ollama run translategemma:27b
 
 Then use the Model dropdown to switch between them without any code changes.
 
+### Custom Ollama URL
+
+If Ollama is running on a different machine or port, set the `OLLAMA_URL` environment variable:
+
+```bash
+# Example: Ollama on a different machine
+export OLLAMA_URL="http://192.168.1.100:11434"
+npm run tauri:dev
+
+# Windows (PowerShell)
+$env:OLLAMA_URL="http://192.168.1.100:11434"
+npm run tauri:dev
+```
+
+Default: `http://localhost:11434`
+
 ### Checking Installed Models
 
 ```bash
@@ -263,10 +279,20 @@ Report bugs or request features: [GitHub Issues](https://github.com/PierrunoYT/l
 
 ## Privacy & Security
 
+### Privacy
 - ✅ **100% local processing** - No data sent to cloud
 - ✅ **No API keys required** - No accounts or authentication
 - ✅ **Works offline** - After model download
+- ✅ **No external dependencies** - Uses system fonts only
 - ✅ **Open source** - Transparent and auditable
+
+### Security Features
+- ✅ **Content Security Policy** - Protects against XSS attacks
+- ✅ **Input validation** - 100KB maximum text length
+- ✅ **Request timeouts** - 120s for translations, 10s for status checks
+- ✅ **Language code validation** - Whitelist of 120+ supported codes
+- ✅ **Request throttling** - One translation at a time
+- ✅ **Error sanitization** - Production builds hide internal details
 
 ## Resources
 

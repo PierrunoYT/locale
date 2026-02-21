@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+- **Content Security Policy enabled** - Added CSP to prevent XSS attacks and unauthorized resource loading
+- **Input validation** - Added 100KB maximum text length limit to prevent DoS attacks
+- **HTTP timeouts** - Configured 120s timeout for translations, 10s for status checks
+- **Language code validation** - Whitelist validation against 120+ supported language codes
+- **Error message sanitization** - Production builds hide internal error details
+- **Request throttling** - Mutex lock prevents concurrent translation requests
+- **Configurable Ollama URL** - Support for `OLLAMA_URL` environment variable
+
+### Changed
+- **System fonts** - Removed Google Fonts dependency, now using system font stack for true 100% local operation
+- **Error handling** - Clear error state when switching models for better UX
+- **localStorage safety** - Added try-catch error handling for localStorage operations
+
 ## [0.1.4] - 2026-02-12
 
 ### Added
