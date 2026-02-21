@@ -81,8 +81,6 @@ You should see a status badge indicating the model state:
 
 > **Note:** The app works in both "Running" and "Installed (Idle)" states. When idle, the first translation takes 3-5 seconds as Ollama loads the model into memory, then subsequent translations are fast (~1-2 seconds).
 
-> 📖 **Need help?** See the [detailed setup guide](SETUP_GUIDE.md) for troubleshooting and advanced configuration.
-
 ### Build Scripts
 
 - **`npm run tauri:dev`** - Normal development mode (hot reload)
@@ -180,6 +178,13 @@ TranslateGemma 12B delivers professional-grade translation quality:
 - **Memory usage**: ~8GB RAM during translation
 - **Offline capable**: Works without internet after model download
 
+### Performance Tips
+
+1. **First translation is slower** - Ollama loads the model into memory (3-5 seconds)
+2. **Subsequent translations are fast** - Model stays loaded (~1-2 seconds)
+3. **Keep Ollama running** - Start `ollama serve` on system boot for instant translations
+4. **Use appropriate model** - Don't use 27B if 4B meets your needs
+
 ## Security & Privacy
 
 ### Privacy First
@@ -211,55 +216,150 @@ TranslateGemma 12B delivers professional-grade translation quality:
 
 ## Advanced Configuration
 
-### Environment Variables
+### Installing Multiple Models
+
+You can install all three models and switch between them in the app:
+
+```bash
+ollama run translategemma:4b
+ollama run translategemma:12b
+ollama run translategemma:27b
+```
+
+Then use the Model dropdown to switch between them without any code changes.
+
+### Custom Ollama URL
 
 **OLLAMA_URL** - Override the default Ollama API endpoint:
 ```bash
 # Default: http://localhost:11434
+# Example: Ollama on a different machine
 export OLLAMA_URL="http://192.168.1.100:11434"
+npm run tauri:dev
+
+# Windows (PowerShell)
+$env:OLLAMA_URL="http://192.168.1.100:11434"
 npm run tauri:dev
 ```
 
 This allows connecting to Ollama running on a different machine or port.
 
+### Ollama Storage Location
+
+Ollama stores models in:
+- **Windows**: `C:\Users\<username>\.ollama\models`
+- **macOS**: `~/.ollama/models`
+- **Linux**: `~/.ollama/models`
+
+### Uninstalling a Model
+
+```bash
+ollama rm translategemma:12b
+```
+
 ## Troubleshooting
 
-### "Ollama is not running"
-Start Ollama in a terminal:
+### "Ollama Disconnected" Status
+
+**Problem**: Red badge showing "Ollama Disconnected"
+
+**Solution**:
 ```bash
 ollama serve
 ```
 
-### "translategemma:<size> model not found"
-Install the model selected in the app:
+Then click **Retry Connection** in the app, or wait for the automatic status check (every 30 seconds).
+
+### "Model not found" Error
+
+**Problem**: Error message saying the model isn't installed
+
+**Solution**: Install the model you selected in the dropdown:
 ```bash
+# For 4B model
 ollama run translategemma:4b
+
+# For 12B model
+ollama run translategemma:12b
+
+# For 27B model
+ollama run translategemma:27b
 ```
 
-### Slow performance / Out of memory
-Use the model selector in the app and switch to the smaller 4B model (requires only 8GB RAM):
-```bash
-ollama run translategemma:4b
-```
-No code changes are required.
+### "Installed (Idle)" Status
 
-### Changes not showing in app
-Clear all caches and rebuild:
+**Problem**: Amber badge showing model is installed but not loaded
+
+**What it means**: The model exists but isn't currently in memory. This is normal when Ollama hasn't been used recently.
+
+**Solution**: Just click **Translate** - Ollama will load the model automatically (takes 3-5 seconds on first translation).
+
+### Slow Performance / Out of Memory
+
+**Problem**: Translations are very slow or system runs out of memory
+
+**Solution**: Switch to a smaller model:
+
+1. Install the 4B model:
+   ```bash
+   ollama run translategemma:4b
+   ```
+
+2. Select **TranslateGemma 4B** from the Model dropdown in the app
+
+3. No code changes or rebuilds required!
+
+### Changes Not Showing in Development
+
+**Problem**: Code changes don't appear when running `npm run tauri:dev`
+
+**Solution**: Clear all caches and rebuild:
 ```bash
 npm run tauri:clean
 ```
 
-See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed troubleshooting.
+This clears both Rust and Vite caches and rebuilds everything.
+
+### Port Already in Use
+
+**Problem**: Error about port 1420 already being in use
+
+**Solution**:
+```bash
+# Kill the existing process
+# Windows:
+taskkill /F /IM locale.exe
+
+# macOS/Linux:
+killall locale
+```
+
+Then run `npm run tauri:dev` again.
+
+### Check Ollama Status
+
+```bash
+# Check if Ollama is running
+ollama ps
+
+# Check Ollama version
+ollama --version
+
+# See all installed models
+ollama list
+```
 
 ## Model Options
 
-| Model | Size | RAM Required | Speed | Quality |
-|-------|------|--------------|-------|---------|
-| **4B** | 3.3GB | 8GB | Fastest | Good |
-| **12B** | 8.1GB | 16GB | Fast | Excellent ⭐ |
-| **27B** | 17GB | 32GB | Slower | Best |
+| Model | Download Size | RAM Required | Speed | Quality | Best For |
+|-------|---------------|--------------|-------|---------|----------|
+| **4B** | 3.3GB | 8GB | Fastest | Good | Daily use, quick translations |
+| **12B** | 8.1GB | 16GB | Fast | Excellent ⭐ | Professional work, balanced performance |
+| **27B** | 17GB | 32GB | Slower | Best | Critical translations, maximum accuracy |
 
 **Default:** 4B (fastest and most accessible)
+
+**Recommendation**: Start with 4B for testing, upgrade to 12B for regular use if you have the RAM.
 
 ### Change Translation Model
 
@@ -334,8 +434,8 @@ TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.de
 - [GitHub Repository](https://github.com/PierrunoYT/locale)
 - [TranslateGemma Model](https://ollama.com/library/translategemma)
 - [Ollama Documentation](https://docs.ollama.com)
-- [Setup Guide](SETUP_GUIDE.md)
 - [Tauri Documentation](https://tauri.app)
+- [Report Issues](https://github.com/PierrunoYT/locale/issues)
 
 ## Recommended IDE Setup
 
