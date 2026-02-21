@@ -7,165 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.1.5] - 2026-02-21
+## [0.1.0] - 2026-02-21
+
+### Added
+- **Runtime model selection** - Choose TranslateGemma 4B, 12B, or 27B directly in the UI
+- **120+ languages** - Full TranslateGemma support with searchable language selector
+- **Three-state connection status** - Running/Installed (Idle)/Disconnected with auto-updates every 30s
+- **In-app help system** - Comprehensive help modal with prerequisites, usage guide, and troubleshooting
+- **Language swap functionality** - Quick ⇄ button to reverse translation direction
+- **Custom app icon** - Professional branding across all platforms
+- **Model preference persistence** - Selected model saved locally and restored on launch
+- **Larger text fields** - Increased size with vertical resize support
+- **Responsive design** - Mobile and desktop optimized layout
+- **Error handling system** - Clear error messages with retry functionality
 
 ### Security
-- **Content Security Policy enabled** - Added CSP to prevent XSS attacks and unauthorized resource loading
-- **Input validation** - Added 100KB maximum text length limit to prevent DoS attacks
-- **HTTP timeouts** - Configured 120s timeout for translations, 10s for status checks
-- **Language code validation** - Whitelist validation against 120+ supported language codes
+- **Content Security Policy enabled** - Protection against XSS attacks and unauthorized resource loading
+- **Input validation** - 100KB maximum text length to prevent DoS attacks
+- **HTTP timeouts** - 120s for translations, 10s for status checks
+- **Language code validation** - Whitelist validation against 120+ supported codes
 - **Error message sanitization** - Production builds hide internal error details
 - **Request throttling** - Async mutex lock prevents concurrent translation requests
 - **Configurable Ollama URL** - Support for `OLLAMA_URL` environment variable
 
-### Changed
-- **System fonts** - Removed Google Fonts dependency, now using system font stack for true 100% local operation
-- **Error handling** - Clear error state when switching models for better UX
-- **localStorage safety** - Added try-catch error handling for localStorage operations
+### Privacy
+- **System fonts** - No external font dependencies for true 100% local operation
+- **No tracking** - No telemetry, analytics, or cloud services
+- **Completely offline** - Works without internet after model download
+- **No API keys** - No accounts or authentication required
 
-### Fixed
-- **Async mutex compatibility** - Use `tokio::sync::Mutex` instead of `std::sync::Mutex` for proper async/await support in Tauri commands
-
-### Documentation
-- Added BUGS.md with comprehensive security analysis
-- Updated README with security features section
-- Updated SETUP_GUIDE with environment variable configuration
-
-### Tooling
-- Added create-release.ps1 PowerShell script for automated GitHub releases
-
-## [0.1.4] - 2026-02-12
-
-### Added
-- **Enhanced info modal** - Now displays all three TranslateGemma models (4B, 12B, 27B) with installation commands for each
-- **Improved help button** - Info button now shows "Help" text alongside the info icon for better discoverability
-- **Quick troubleshooting section** - Added dedicated troubleshooting commands in the help modal (ollama serve, ollama ps, ollama list)
-- **App screenshot** - Added visual showcase in README to demonstrate the UI
-- **Updated documentation** - README and SETUP_GUIDE now accurately reflect v0.1.4 features with runtime model switching
-
-### Changed
-- **Three-state connection status** - Status badge now distinguishes between:
-  - "Running" (green) - Model is loaded in memory and ready
-  - "Installed (Idle)" (amber) - Model is installed but not currently loaded
-  - "Ollama Disconnected" (red) - Ollama is not reachable
-- **More informative status messages** - Changed "Connected" to "Running" for clarity
-- **Better usage instructions** - Info modal now includes model selection as the first step
-
-### Backend (Rust)
-- Enhanced `check_ollama_status` to return "running" or "installed" status by checking `/api/ps` endpoint
-- Improved model state detection to differentiate between installed and actively loaded models
-
-## [0.1.3] - 2026-02-12
-
-### Added
-- **Model switcher** - Select TranslateGemma `4b`, `12b`, or `27b` directly in the UI
-- **Model preference persistence** - Selected model is saved locally and restored on app launch
-
-### Changed
-- **Dynamic model usage** - Translation requests and model health checks now use the selected model instead of a hardcoded `12b`
-- **Status and helper text** - Connection badge, loading text, and setup instructions now reflect the selected model
-
-### Backend (Rust)
-- `translate_text` now accepts an optional `model` parameter
-- `check_ollama_status` now accepts an optional `model` parameter
-- Added allowlist validation for supported model tags: `translategemma:4b`, `translategemma:12b`, `translategemma:27b`
-
-## [0.1.2] - 2026-02-10
-
-### Changed
-- **Larger text fields** - Increased default size and added vertical resize support
-- **Translate button** - Moved directly under the text fields with responsive full-width layout on mobile
-
-## [0.1.1] - 2026-02-10
-
-### Added
-- **Info button** - "How it works" modal in the header explaining prerequisites, usage steps, connection status, and privacy
-- **New logo** - Custom app icon for window, taskbar, and installers
-
-## [0.1.0] - 2026-01-28
-
-### Added
-- Initial release of **Locale** with **TranslateGemma 12B integration**
-- Full AI-powered translation via Ollama (local, privacy-focused)
-- **120+ languages** - All TranslateGemma-supported languages available in the UI
-- **Searchable language selector** - Search languages by name or code (e.g., "spanish", "ja") in dropdown menus
-- Language swap functionality
-- Dual-pane text input/output areas with language labels
-- Translate button with loading states
-- Dark mode and light mode support (automatic based on system preference)
-- Responsive design for mobile and desktop
-- **Connection status indicator** - Real-time Ollama/model status badge with periodic health checks (every 30s) and re-check on window focus
-- **Error handling system** - Clear error messages with retry functionality
-- **Model verification** - Checks both Ollama connection and model installation
-
-### Fixed
-- **Connection status accuracy** - Status badge now updates correctly when Ollama is not running. Added periodic health checks (every 30 seconds) and re-check when the window regains focus.
-
-### Changed
-- **Modern UI redesign** - Dark-first theme with Plus Jakarta Sans typography, emerald accents, pill-style status badges, and language labels above text areas. Light mode supported via system preference.
-
-### Backend (Rust)
-- Tauri 2 framework with Rust backend
-- `reqwest` HTTP client for Ollama API communication
-- `tokio` async runtime for non-blocking operations
-- `translate_text` command - Calls TranslateGemma 12B for translation
-- `check_ollama_status` command - Verifies Ollama is running and model is installed
-- Professional prompt engineering following TranslateGemma specifications
-- Comprehensive error handling for connection and API issues
-
-### Frontend (React + TypeScript)
-- React 19 + TypeScript
-- Real-time translation state management
-- Searchable language dropdown component
-- Connection status badge (green=connected, red=disconnected)
-- Error message display with actionable guidance
-- "Retry Connection" button for recovery
-- Loading states during translation
-- Automatic status check on app launch
-- Form controls disabled during active translation
-
-### Technical Stack
-- **Frontend**: React 19 + TypeScript + Vite 7
-- **Backend**: Rust + Tauri 2
-- **Translation Engine**: TranslateGemma 12B via Ollama
-- **API**: Ollama HTTP API (localhost:11434)
-- **Styling**: CSS3 with CSS Variables
-- **Dependencies**: reqwest@0.12, tokio@1
+### Technical
+- **Modern UI** - Dark-first design with system fonts and emerald accents
+- **Error handling** - Clear error state when switching models, localStorage safety
+- **Async compatibility** - Uses `tokio::sync::Mutex` for proper async/await support
 
 ### Documentation
-- Comprehensive README with integration details
-- SETUP_GUIDE with installation and troubleshooting
+- **BUGS.md** - Comprehensive security analysis with all issues documented and fixed
+- **README.md** - Complete project overview with security features section
+- **SETUP_GUIDE.md** - Detailed installation, troubleshooting, and environment variable configuration
+- **CHANGELOG.md** - Version history and changes
 - Model comparison table (4B, 12B, 27B options)
 - Architecture documentation
 - Performance benchmarks
 
-### Build Scripts
-- `npm run tauri:dev` - Normal development mode
-- `npm run tauri:clean` - Clean rebuild (clears all caches)
-
-### Requirements
-- Ollama must be installed and running
-- TranslateGemma 12B model must be downloaded: `ollama run translategemma:12b`
-- Minimum 16GB RAM recommended (8GB with 4B model)
-- 10GB free disk space for model
-
-### Performance
-- First translation: ~3-5 seconds (model loading)
-- Subsequent translations: ~1-2 seconds
-- Memory usage: ~8GB RAM during translation
-- Context window: 128K tokens
-- Offline capable after model download
-
-### Privacy & Security
-- ✅ 100% local processing - no cloud API calls
-- ✅ No data sent to external servers
-- ✅ No API keys or accounts required
-- ✅ Works completely offline
-- ✅ Open source and transparent
-
-[0.1.5]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.5
-[0.1.4]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.4
-[0.1.3]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.3
-[0.1.2]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.2
-[0.1.1]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.1
+### Tooling
+- **create-release.ps1** - Automated GitHub release creation script
+- **clean-release-assets.ps1** - Remove installers from specific releases
+- **remove-all-releases.ps1** - Remove all releases and tags
+- Build scripts: `npm run tauri:dev`, `npm run tauri:clean`, `npm run tauri build`
 [0.1.0]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.0

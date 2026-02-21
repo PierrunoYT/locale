@@ -1,6 +1,6 @@
 # Locale Setup Guide
 
-**Version**: 0.1.5 | Complete setup guide for TranslateGemma translation
+**Version**: 0.1.0 | Complete setup guide for TranslateGemma translation
 
 ## System Requirements
 

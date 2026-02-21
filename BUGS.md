@@ -1,7 +1,7 @@
 # Security Issues and Bugs
 
 **Last Updated**: 2026-02-21  
-**Version**: 0.1.5  
+**Version**: 0.1.0  
 **Status**: ✅ All issues fixed
 
 ## Fixed Security Issues
