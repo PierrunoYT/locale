@@ -1,13 +1,18 @@
 use serde::{Deserialize, Serialize};
-use std::sync::Mutex;
 use std::time::Duration;
+use tokio::sync::Mutex;
+use std::sync::OnceLock;
 
 const DEFAULT_MODEL: &str = "translategemma:4b";
 const SUPPORTED_MODELS: [&str; 3] = ["translategemma:4b", "translategemma:12b", "translategemma:27b"];
 const MAX_TEXT_LENGTH: usize = 100_000;
 const HTTP_TIMEOUT_SECS: u64 = 120;
 
-static TRANSLATION_LOCK: Mutex<()> = Mutex::new(());
+static TRANSLATION_LOCK: OnceLock<Mutex<()>> = OnceLock::new();
+
+fn get_translation_lock() -> &'static Mutex<()> {
+    TRANSLATION_LOCK.get_or_init(|| Mutex::new(()))
+}
 
 const VALID_LANGUAGE_CODES: &[&str] = &[
     "aa", "ab", "af", "ak", "am", "an", "ar", "as", "az", "ba", "be", "bg", "bm", "bn", "bo", "br",
@@ -249,7 +254,7 @@ async fn translate_text(
     text: String,
     model: Option<String>,
 ) -> Result<String, String> {
-    let _lock = TRANSLATION_LOCK.lock().map_err(|_| "Translation already in progress".to_string())?;
+    let _lock = get_translation_lock().lock().await;
 
     if text.trim().is_empty() {
         return Err("Text cannot be empty".to_string());
