@@ -2,7 +2,7 @@
 
 A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma** (4B/12B/27B) for professional-quality translation that runs entirely on your machine.
 
-**Version**: 0.1.4 | **Status**: Production Ready | **License**: MIT
+**Version**: 0.1.5 | **Status**: Production Ready | **License**: MIT
 
 ![Locale App Screenshot](assets/app-screenshot.png)
 
@@ -316,10 +316,10 @@ Please feel free to submit a [Pull Request](https://github.com/PierrunoYT/locale
 
 See [CHANGELOG.md](localtranslate/CHANGELOG.md) for detailed release notes.
 
-**Current Version**: 0.1.4 (2026-02-12)
-- Enhanced three-state connection status (Running/Installed/Disconnected)
-- Improved info modal showing all available models with installation commands
-- Better help discoverability with dedicated troubleshooting section
+**Current Version**: 0.1.5 (2026-02-21)
+- Comprehensive security hardening (CSP, input validation, timeouts)
+- Removed external dependencies for true 100% local operation
+- Improved error handling and UX
 
 ## License
 

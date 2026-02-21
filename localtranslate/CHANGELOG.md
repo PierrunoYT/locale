@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-02-21
+
 ### Security
 - **Content Security Policy enabled** - Added CSP to prevent XSS attacks and unauthorized resource loading
 - **Input validation** - Added 100KB maximum text length limit to prevent DoS attacks
@@ -20,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **System fonts** - Removed Google Fonts dependency, now using system font stack for true 100% local operation
 - **Error handling** - Clear error state when switching models for better UX
 - **localStorage safety** - Added try-catch error handling for localStorage operations
+
+### Documentation
+- Added BUGS.md with comprehensive security analysis
+- Updated README with security features section
+- Updated SETUP_GUIDE with environment variable configuration
 
 ## [0.1.4] - 2026-02-12
 
@@ -150,6 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ Works completely offline
 - ✅ Open source and transparent
 
+[0.1.5]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.5
 [0.1.4]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.4
 [0.1.3]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.3
 [0.1.2]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.2
