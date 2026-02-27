@@ -1,19 +1,21 @@
 # [Locale](https://github.com/PierrunoYT/locale)
 
-A minimal, local translation application built with Tauri, React, and TypeScript. Powered by **TranslateGemma** (4B/12B/27B) for professional-quality translation that runs entirely on your machine.
+A minimal, local translation and grammar correction application built with Tauri, React, and TypeScript. Powered by **TranslateGemma** (4B/12B/27B) for translation and **Gemma3** (1B/4B/12B/27B) for grammar correction — all running entirely on your machine.
 
-**Version**: 0.1.0 | **Status**: Production Ready | **License**: MIT
+**Version**: 0.2.0 | **Status**: Production Ready | **License**: MIT
 
 ![Locale App Screenshot](assets/app-screenshot.png)
 
 ## Features
 
 - 🤖 **Runtime model switch** - Choose TranslateGemma 4B, 12B, or 27B directly in the UI
+- ✏️ **Grammar correction** - Fix grammar, spelling, and punctuation using Gemma3 (1B/4B/12B/27B)
 - 🌍 **120+ languages** - Full TranslateGemma support with searchable language selector
 - 🔄 **Quick language swap** functionality
-- 🟢 **Live connection status** - Status badge updates every 30s and when you return to the app
+- 🟢 **Live connection status** - Per-model status badge (Running/Installed/Disconnected) updates every 30s
+- 🗂️ **Tabbed interface** - Switch between Translate and Grammar tabs
 - ℹ️ **How it works** - Info button in the header with a quick guide
-- 🎨 **Modern UI** - Dark-first design with Plus Jakarta Sans, emerald accents, and light mode support
+- 🎨 **Modern UI** - Dark-first design with system fonts, emerald accents, and light mode support
 - 📱 **Responsive design** - Resizable text fields, translate button adapts to screen size
 - ⚡ **Fast and lightweight** desktop application
 - 🔒 **100% Local processing** - Your data never leaves your machine
@@ -27,6 +29,7 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 - **Build Tool**: Vite 7
 - **Styling**: CSS3 with CSS Variables
 - **Translation Engine**: TranslateGemma via Ollama (4B/12B/27B)
+- **Grammar Engine**: Gemma3 via Ollama (1B/4B/12B/27B)
 - **Backend**: Rust with async HTTP client
 
 ## Prerequisites
@@ -35,7 +38,8 @@ A minimal, local translation application built with Tauri, React, and TypeScript
 - **Node.js** (v18 or higher)
 - **Rust** (latest stable)
 - **Ollama** - Download from [ollama.com](https://ollama.com/download)
-- **At least one TranslateGemma model** - Install via Ollama (see setup below)
+- **At least one TranslateGemma model** - For translation (see setup below)
+- **At least one Gemma3 model** *(optional)* - For grammar correction (see setup below)
 
 ### System Requirements
 - **RAM**: 16GB+ recommended (8GB minimum with 4B model)
@@ -60,11 +64,19 @@ ollama run translategemma:4b
 
 This downloads the selected model and starts Ollama. `4b` is the lightest option; `12b` and `27b` are available for higher quality.
 
+### 2b. Install a Gemma3 model (for grammar correction)
+
+```bash
+ollama run gemma3:4b
+```
+
+Optional but required for the Grammar tab. `1b` is the lightest; `4b`, `12b`, and `27b` offer higher quality.
+
 ### 3. Install Locale
 
 ```bash
 git clone https://github.com/PierrunoYT/locale
-cd locale/localtranslate
+cd locale/locale
 npm install
 ```
 
@@ -120,17 +132,35 @@ The built application will be in `src-tauri/target/release/`.
 ## Project Structure
 
 ```
-localtranslate/
-├── src/                 # React frontend source
-│   ├── App.tsx         # Main application component
-│   ├── App.css         # Application styles
-│   ├── LanguageSelect.tsx  # Searchable language selector
-│   ├── languages.ts    # Full language list (120+)
-│   └── main.tsx        # React entry point
-├── src-tauri/          # Rust backend source
-│   └── src/            # Rust source files
-├── public/             # Static assets
-└── package.json        # Node.js dependencies
+├── assets/                  # Repository assets (screenshots)
+├── tasks.md                 # Project task history
+├── create-release.ps1       # Automated GitHub release script
+├── README.md
+├── LICENSE
+└── locale/                  # Application root
+    ├── package.json         # Node.js dependencies & scripts
+    ├── index.html           # HTML entry point
+    ├── vite.config.ts       # Vite configuration (Tauri dev server)
+    ├── tsconfig.json        # TypeScript configuration
+    ├── tsconfig.node.json   # TypeScript config for Node tooling
+    ├── CHANGELOG.md         # Version history
+    ├── public/              # Static assets (favicons)
+    ├── src/                 # React frontend
+    │   ├── main.tsx         # React entry point
+    │   ├── App.tsx          # Main application component
+    │   ├── App.css          # All application styles (dark/light)
+    │   ├── LanguageSelect.tsx  # Searchable language dropdown
+    │   ├── languages.ts     # 120+ language definitions
+    │   └── assets/          # Frontend assets
+    └── src-tauri/           # Rust backend (Tauri)
+        ├── Cargo.toml       # Rust dependencies
+        ├── tauri.conf.json  # Tauri config (window, CSP, bundle)
+        ├── build.rs         # Tauri build hooks
+        ├── capabilities/    # Tauri permission definitions
+        ├── icons/           # App icons (all platforms)
+        └── src/
+            ├── main.rs      # Application entry point
+            └── lib.rs       # Ollama integration, translation & grammar logic
 ```
 
 ## Usage
@@ -142,7 +172,7 @@ localtranslate/
 
 2. **Launch Locale** and wait for the connection indicator (updates every 30s and when you return to the app)
 
-3. **Translate:** (click the ℹ️ **Help** button in the header for a complete guide)
+3. **Translate** (Translate tab):
    - Select a model from the **Model** dropdown (4B/12B/27B)
    - Click a language button to open the searchable dropdown
    - Search by name or code (e.g., "spanish", "ja", "arabic")
@@ -152,6 +182,14 @@ localtranslate/
    - Translation appears in the right panel
 
 4. **Swap Languages:** Use the ⇄ button to quickly reverse translation direction
+
+5. **Grammar Correction** (Grammar tab):
+   - Switch to the **Grammar** tab
+   - Select a Gemma3 model from the **Model** dropdown (1B/4B/12B/27B)
+   - Select the language of your text
+   - Enter text in the left panel
+   - Click **"Correct Grammar"**
+   - Corrected text appears in the right panel
 
 ## Supported Languages
 
@@ -218,15 +256,22 @@ TranslateGemma 12B delivers professional-grade translation quality:
 
 ### Installing Multiple Models
 
-You can install all three models and switch between them in the app:
+You can install multiple models and switch between them in the app:
 
 ```bash
+# Translation models
 ollama run translategemma:4b
 ollama run translategemma:12b
 ollama run translategemma:27b
+
+# Grammar correction models
+ollama run gemma3:1b
+ollama run gemma3:4b
+ollama run gemma3:12b
+ollama run gemma3:27b
 ```
 
-Then use the Model dropdown to switch between them without any code changes.
+Then use the Model dropdown on each tab to switch without any code changes.
 
 ### Custom Ollama URL
 
@@ -255,6 +300,7 @@ Ollama stores models in:
 
 ```bash
 ollama rm translategemma:12b
+ollama rm gemma3:4b
 ```
 
 ## Troubleshooting
@@ -351,24 +397,30 @@ ollama list
 
 ## Model Options
 
+### Translation Models (TranslateGemma)
+
 | Model | Download Size | RAM Required | Speed | Quality | Best For |
 |-------|---------------|--------------|-------|---------|----------|
 | **4B** | 3.3GB | 8GB | Fastest | Good | Daily use, quick translations |
 | **12B** | 8.1GB | 16GB | Fast | Excellent ⭐ | Professional work, balanced performance |
 | **27B** | 17GB | 32GB | Slower | Best | Critical translations, maximum accuracy |
 
-**Default:** 4B (fastest and most accessible)
+### Grammar Models (Gemma3)
 
-**Recommendation**: Start with 4B for testing, upgrade to 12B for regular use if you have the RAM.
+| Model | Download Size | RAM Required | Speed | Quality | Best For |
+|-------|---------------|--------------|-------|---------|----------|
+| **1B** | 1.0GB | 4GB | Fastest | Basic | Quick checks, low-resource machines |
+| **4B** | 3.3GB | 8GB | Fast | Good ⭐ | Daily grammar correction |
+| **12B** | 8.1GB | 16GB | Moderate | Excellent | Thorough correction |
+| **27B** | 17GB | 32GB | Slower | Best | Maximum accuracy |
 
-### Change Translation Model
+**Defaults:** TranslateGemma 4B (translation), Gemma3 4B (grammar)
 
-Use the **Model** dropdown above the language selectors to switch between:
-- `translategemma:4b`
-- `translategemma:12b`
-- `translategemma:27b`
+**Recommendation**: Start with 4B models for both, upgrade to 12B if you have the RAM.
 
-Your selection is saved locally and reused when you reopen the app.
+### Changing Models
+
+Use the **Model** dropdown on each tab to switch models. Your selection is saved locally and reused when you reopen the app.
 
 ### Add More Languages
 
@@ -396,9 +448,9 @@ Edit `src/languages.ts` to add or modify languages. The app includes all 120+ Tr
 └────────┬────────┘
          │
 ┌────────▼────────┐
-│ TranslateGemma  │  AI Translation Model
-│ 4B/12B/27B      │  (Runs locally on your machine)
-└─────────────────┘
+│ TranslateGemma  │  AI Translation Model (4B/12B/27B)
+│ Gemma3          │  AI Grammar Model (1B/4B/12B/27B)
+└─────────────────┘  (Runs locally on your machine)
 ```
 
 ## Contributing
@@ -414,14 +466,14 @@ Please feel free to submit a [Pull Request](https://github.com/PierrunoYT/locale
 
 ## Version History
 
-See [CHANGELOG.md](localtranslate/CHANGELOG.md) for detailed release notes.
+See [CHANGELOG.md](locale/CHANGELOG.md) for detailed release notes.
 
-**Current Version**: 0.1.0 (2026-02-21)
-- Runtime model selection (4B/12B/27B)
+**Current Version**: 0.2.0 (2026-02-27)
+- Grammar correction tab powered by Gemma3 (1B/4B/12B/27B)
+- Tabbed interface (Translate / Grammar)
+- Runtime model selection for both tabs
 - Three-state connection status (Running/Installed/Disconnected)
-- Comprehensive security hardening (CSP, input validation, timeouts)
 - 100% local operation with no external dependencies
-- In-app help system and modern UI
 
 ## License
 
@@ -433,6 +485,7 @@ TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.de
 
 - [GitHub Repository](https://github.com/PierrunoYT/locale)
 - [TranslateGemma Model](https://ollama.com/library/translategemma)
+- [Gemma3 Model](https://ollama.com/library/gemma3)
 - [Ollama Documentation](https://docs.ollama.com)
 - [Tauri Documentation](https://tauri.app)
 - [Report Issues](https://github.com/PierrunoYT/locale/issues)
@@ -443,4 +496,4 @@ TranslateGemma model is subject to the [Gemma Terms of Use](https://ai.google.de
 
 ---
 
-**Built with ❤️ using TranslateGemma, Tauri, React, and Rust**
+**Built with ❤️ using TranslateGemma, Gemma3, Tauri, React, and Rust**

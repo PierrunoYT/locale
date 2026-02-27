@@ -51,5 +51,6 @@ RELEASE_*.md
 
 # Release management scripts (local tools only)
 create-release.ps1
+create-release.sh
 clean-release-assets.ps1
 remove-all-releases.ps1
