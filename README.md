@@ -4,9 +4,9 @@ A minimal, local translation and grammar correction application built with Tauri
 
 **Version**: 0.3.0 | **Status**: Production Ready | **License**: MIT
 
-![In-App Model Download](assets/model-download.png)
+![In-App Model Download](assets/model-download.png?v=2)
 
-![Grammar Correction Tab](assets/grammar-tab.png)
+![Grammar Correction Tab](assets/grammar-tab.png?v=2)
 
 ## Features
 
