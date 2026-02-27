@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **App screenshots** – Added model download and grammar tab screenshots to README
+
+## [0.3.0] - 2026-02-27
+
+### Added
+- **In-app model download** – Download translation and grammar models directly from the app with a progress bar, no terminal needed
+- **`pull_model` Tauri command** – Streams Ollama's `/api/pull` endpoint and emits real-time progress events to the frontend
+- **"Not Installed" status** – New status badge state distinguishes between "Ollama disconnected" and "model not installed"
+- **Download UI** – Blue download section with progress bar and percentage appears below model selector when a model is missing
+
 ## [0.2.0] - 2026-02-27
 
 ### Added
@@ -74,5 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **clean-release-assets.ps1** - Remove installers from specific releases
 - **remove-all-releases.ps1** - Remove all releases and tags
 - Build scripts: `npm run tauri:dev`, `npm run tauri:clean`, `npm run tauri build`
+[0.3.0]: https://github.com/PierrunoYT/locale/releases/tag/v0.3.0
 [0.2.0]: https://github.com/PierrunoYT/locale/releases/tag/v0.2.0
 [0.1.0]: https://github.com/PierrunoYT/locale/releases/tag/v0.1.0

@@ -139,7 +139,32 @@ A record of the tasks completed to build this project.
 - [x] Add `LICENSE` file
 - [x] Add app screenshot to `assets/`
 
-## 13. Build & Release Tooling
+## 13. In-App Model Download
+
+- [x] Add `pull_model` Tauri command that streams Ollama's `/api/pull` endpoint
+- [x] Emit `pull-progress` events with status, total, and completed bytes to the frontend
+- [x] Validate requested model against both translation and grammar supported model lists
+- [x] Add `PullProgress` and `OllamaPullLine` structs for streaming JSON deserialization
+- [x] Register `pull_model` in Tauri invoke handler
+- [x] Add `"not_installed"` status to differentiate "model missing" from "Ollama disconnected"
+- [x] Update `checkOllamaStatus` and `checkGrammarModelStatus` to detect "not found" errors
+- [x] Add `pullingModel` and `pullProgress` state for tracking downloads
+- [x] Listen for `pull-progress` Tauri events and compute download percentage
+- [x] Add `handlePullModel` function that invokes `pull_model` and re-checks status on completion
+- [x] Add download section UI with "Download Model" button on both Translate and Grammar tabs
+- [x] Show progress bar with status text and percentage during download
+- [x] Add "Not Installed" status badge in header
+- [x] Add CSS styles for download section, button, progress bar, and status text
+- [x] Import `listen` from `@tauri-apps/api/event` and `Emitter` from `tauri` crate
+
+## 14. Documentation – Screenshots
+
+- [x] Add model download screenshot (`assets/model-download.png`) showing the in-app download prompt
+- [x] Add grammar tab screenshot (`assets/grammar-tab.png`) showing the grammar correction interface
+- [x] Rename raw screenshot files to descriptive names
+- [x] Add both screenshots to `README.md` below the main app screenshot
+
+## 15. Build & Release Tooling
 
 - [x] Create `create-release.ps1` PowerShell script for automated GitHub releases
 - [x] Support `--DryRun` and `--SkipBuild` flags in release script

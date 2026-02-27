@@ -2,9 +2,13 @@
 
 A minimal, local translation and grammar correction application built with Tauri, React, and TypeScript. Powered by **TranslateGemma** (4B/12B/27B) for translation and **Gemma3** (1B/4B/12B/27B) for grammar correction — all running entirely on your machine.
 
-**Version**: 0.2.0 | **Status**: Production Ready | **License**: MIT
+**Version**: 0.3.0 | **Status**: Production Ready | **License**: MIT
 
 ![Locale App Screenshot](assets/app-screenshot.png)
+
+![In-App Model Download](assets/model-download.png)
+
+![Grammar Correction Tab](assets/grammar-tab.png)
 
 ## Features
 
@@ -19,6 +23,7 @@ A minimal, local translation and grammar correction application built with Tauri
 - 📱 **Responsive design** - Resizable text fields, translate button adapts to screen size
 - ⚡ **Fast and lightweight** desktop application
 - 🔒 **100% Local processing** - Your data never leaves your machine
+- 📥 **In-app model download** - Download models directly from the app with progress tracking
 - 🔓 **Privacy-focused** - No API keys, no cloud services, no tracking
 - 🆓 **Completely free** - No subscription or usage limits
 
@@ -56,21 +61,20 @@ Download and install Ollama from [ollama.com](https://ollama.com/download), then
 ollama --version
 ```
 
-### 2. Install a TranslateGemma model
+### 2. Install a model
 
+You can install models either **from the app** or from the terminal:
+
+**From the app:** When a model is not installed, the app shows a **Download** button with a progress bar — no terminal needed.
+
+**From the terminal:**
 ```bash
+# Translation model
 ollama run translategemma:4b
-```
 
-This downloads the selected model and starts Ollama. `4b` is the lightest option; `12b` and `27b` are available for higher quality.
-
-### 2b. Install a Gemma3 model (for grammar correction)
-
-```bash
+# Grammar correction model (optional)
 ollama run gemma3:4b
 ```
-
-Optional but required for the Grammar tab. `1b` is the lightest; `4b`, `12b`, and `27b` offer higher quality.
 
 ### 3. Install Locale
 
@@ -89,6 +93,7 @@ npm run tauri:dev
 You should see a status badge indicating the model state:
 - 🟢 **Running** - Model is loaded and ready
 - 🟠 **Installed (Idle)** - Model is installed but not loaded (will auto-load on first translation)
+- 🔴 **Not Installed** - Model is missing (click **Download** to install it from the app)
 - 🔴 **Disconnected** - Ollama is not running
 
 > **Note:** The app works in both "Running" and "Installed (Idle)" states. When idle, the first translation takes 3-5 seconds as Ollama loads the model into memory, then subsequent translations are fast (~1-2 seconds).
@@ -316,20 +321,13 @@ ollama serve
 
 Then click **Retry Connection** in the app, or wait for the automatic status check (every 30 seconds).
 
-### "Model not found" Error
+### "Model not found" / "Not Installed" Status
 
-**Problem**: Error message saying the model isn't installed
+**Problem**: The model you selected isn't installed
 
-**Solution**: Install the model you selected in the dropdown:
+**Solution**: Click the **Download** button that appears below the model selector — the app will download and install the model with a progress bar. Alternatively, install from the terminal:
 ```bash
-# For 4B model
 ollama run translategemma:4b
-
-# For 12B model
-ollama run translategemma:12b
-
-# For 27B model
-ollama run translategemma:27b
 ```
 
 ### "Installed (Idle)" Status
@@ -468,11 +466,12 @@ Please feel free to submit a [Pull Request](https://github.com/PierrunoYT/locale
 
 See [CHANGELOG.md](locale/CHANGELOG.md) for detailed release notes.
 
-**Current Version**: 0.2.0 (2026-02-27)
+**Current Version**: 0.3.0 (2026-02-27)
+- In-app model download with streaming progress bar
 - Grammar correction tab powered by Gemma3 (1B/4B/12B/27B)
 - Tabbed interface (Translate / Grammar)
 - Runtime model selection for both tabs
-- Three-state connection status (Running/Installed/Disconnected)
+- Four-state connection status (Running/Installed/Not Installed/Disconnected)
 - 100% local operation with no external dependencies
 
 ## License

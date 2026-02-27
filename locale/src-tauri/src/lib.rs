@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use tokio::sync::Mutex;
 use std::sync::OnceLock;
+use tauri::Emitter;
 
 const DEFAULT_MODEL: &str = "translategemma:4b";
 const SUPPORTED_MODELS: [&str; 3] = ["translategemma:4b", "translategemma:12b", "translategemma:27b"];
@@ -535,6 +536,87 @@ async fn check_grammar_model_status(model: Option<String>) -> Result<String, Str
     }
 }
 
+#[derive(Clone, Serialize)]
+struct PullProgress {
+    status: String,
+    total: Option<u64>,
+    completed: Option<u64>,
+}
+
+#[derive(Deserialize)]
+struct OllamaPullLine {
+    status: Option<String>,
+    total: Option<u64>,
+    completed: Option<u64>,
+    error: Option<String>,
+}
+
+#[tauri::command]
+async fn pull_model(app: tauri::AppHandle, model: String) -> Result<(), String> {
+    let all_supported: Vec<&str> = SUPPORTED_MODELS
+        .iter()
+        .chain(SUPPORTED_GRAMMAR_MODELS.iter())
+        .copied()
+        .collect();
+
+    if !all_supported.contains(&model.as_str()) {
+        return Err(format!("Unsupported model: {}", model));
+    }
+
+    let ollama_url = get_ollama_url();
+    let client = reqwest::Client::builder()
+        .build()
+        .map_err(|_| "Failed to create HTTP client".to_string())?;
+
+    let mut response = client
+        .post(format!("{}/api/pull", ollama_url))
+        .json(&serde_json::json!({ "name": model, "stream": true }))
+        .send()
+        .await
+        .map_err(|_| "Failed to connect to Ollama. Please ensure Ollama is running.".to_string())?;
+
+    if !response.status().is_success() {
+        return Err(format!("Ollama API returned error: {}", response.status()));
+    }
+
+    let mut buffer = String::new();
+
+    loop {
+        match response.chunk().await {
+            Ok(Some(chunk)) => {
+                buffer.push_str(&String::from_utf8_lossy(&chunk));
+
+                while let Some(newline_pos) = buffer.find('\n') {
+                    let line = buffer[..newline_pos].trim().to_string();
+                    buffer = buffer[newline_pos + 1..].to_string();
+
+                    if line.is_empty() {
+                        continue;
+                    }
+
+                    if let Ok(pull_line) = serde_json::from_str::<OllamaPullLine>(&line) {
+                        if let Some(error) = pull_line.error {
+                            return Err(error);
+                        }
+
+                        let progress = PullProgress {
+                            status: pull_line.status.unwrap_or_default(),
+                            total: pull_line.total,
+                            completed: pull_line.completed,
+                        };
+
+                        let _ = app.emit("pull-progress", &progress);
+                    }
+                }
+            }
+            Ok(None) => break,
+            Err(e) => return Err(format!("Download error: {}", e)),
+        }
+    }
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -543,7 +625,8 @@ pub fn run() {
             translate_text,
             check_ollama_status,
             correct_grammar,
-            check_grammar_model_status
+            check_grammar_model_status,
+            pull_model
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

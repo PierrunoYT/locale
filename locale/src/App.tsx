@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import { LanguageSelect } from "./LanguageSelect";
 import { LANGUAGES } from "./languages";
 import "./App.css";
 
 type Tab = "translate" | "grammar";
+type ModelStatus = "running" | "installed" | "not_installed" | "disconnected" | null;
 
 const MODEL_OPTIONS = [
   { value: "translategemma:4b", label: "TranslateGemma 4B" },
@@ -47,9 +49,7 @@ function App() {
   });
   const [isTranslating, setIsTranslating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [ollamaStatus, setOllamaStatus] = useState<
-    "running" | "installed" | "disconnected" | null
-  >(null);
+  const [ollamaStatus, setOllamaStatus] = useState<ModelStatus>(null);
   const [showInfo, setShowInfo] = useState(false);
 
   // Grammar state
@@ -68,9 +68,11 @@ function App() {
   });
   const [isCorrecting, setIsCorrecting] = useState(false);
   const [grammarError, setGrammarError] = useState<string | null>(null);
-  const [grammarModelStatus, setGrammarModelStatus] = useState<
-    "running" | "installed" | "disconnected" | null
-  >(null);
+  const [grammarModelStatus, setGrammarModelStatus] = useState<ModelStatus>(null);
+
+  // Pull/download state
+  const [pullingModel, setPullingModel] = useState<string | null>(null);
+  const [pullProgress, setPullProgress] = useState<{ status: string; percent: number | null } | null>(null);
 
   const selectedModelLabel = getModelLabel(selectedModel);
   const selectedGrammarModelLabel = getModelLabel(selectedGrammarModel);
@@ -85,8 +87,13 @@ function App() {
       }
       setError(null);
     } catch (err) {
-      setOllamaStatus("disconnected");
-      if (!silent) setError(err as string);
+      const errorStr = err as string;
+      if (errorStr.includes("not found")) {
+        setOllamaStatus("not_installed");
+      } else {
+        setOllamaStatus("disconnected");
+      }
+      if (!silent) setError(errorStr);
     }
   };
 
@@ -100,8 +107,13 @@ function App() {
       }
       setGrammarError(null);
     } catch (err) {
-      setGrammarModelStatus("disconnected");
-      if (!silent) setGrammarError(err as string);
+      const errorStr = err as string;
+      if (errorStr.includes("not found")) {
+        setGrammarModelStatus("not_installed");
+      } else {
+        setGrammarModelStatus("disconnected");
+      }
+      if (!silent) setGrammarError(errorStr);
     }
   };
 
@@ -139,6 +151,45 @@ function App() {
       console.error("Failed to save grammar model preference:", e);
     }
   }, [selectedGrammarModel]);
+
+  useEffect(() => {
+    const unlisten = listen<{ status: string; total?: number; completed?: number }>(
+      "pull-progress",
+      (event) => {
+        const { status, total, completed } = event.payload;
+        const percent = total && completed ? (completed / total) * 100 : null;
+        setPullProgress({ status, percent });
+      }
+    );
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
+
+  const handlePullModel = async (model: string) => {
+    setPullingModel(model);
+    setPullProgress({ status: "Starting download...", percent: null });
+    setError(null);
+    setGrammarError(null);
+
+    try {
+      await invoke("pull_model", { model });
+      if (MODEL_OPTIONS.some((m) => m.value === model)) {
+        await checkOllamaStatus(false, model);
+      } else {
+        await checkGrammarModelStatus(false, model);
+      }
+    } catch (err) {
+      if (MODEL_OPTIONS.some((m) => m.value === model)) {
+        setError(err as string);
+      } else {
+        setGrammarError(err as string);
+      }
+    } finally {
+      setPullingModel(null);
+      setPullProgress(null);
+    }
+  };
 
   const handleTranslate = async () => {
     if (!sourceText.trim()) {
@@ -239,6 +290,11 @@ function App() {
               {currentStatusLabel} Installed (Idle)
             </span>
           )}
+          {currentStatus === "not_installed" && (
+            <span className="status-badge disconnected">
+              {currentStatusLabel} Not Installed
+            </span>
+          )}
           {currentStatus === "disconnected" && (
             <span className="status-badge disconnected">
               Ollama Disconnected
@@ -279,6 +335,38 @@ function App() {
               ))}
             </select>
           </div>
+
+          {ollamaStatus === "not_installed" && (
+            <div className="download-section">
+              {pullingModel === selectedModel ? (
+                <>
+                  <div className="pull-info">
+                    <span className="pull-status">{pullProgress?.status || "Starting download..."}</span>
+                    {pullProgress?.percent != null && (
+                      <span className="pull-percent">{pullProgress.percent.toFixed(1)}%</span>
+                    )}
+                  </div>
+                  <div className="pull-progress">
+                    <div
+                      className="pull-progress-bar"
+                      style={{ width: `${pullProgress?.percent ?? 0}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="download-text">{selectedModelLabel} is not installed</span>
+                  <button
+                    onClick={() => handlePullModel(selectedModel)}
+                    className="download-button"
+                    disabled={pullingModel !== null}
+                  >
+                    Download {selectedModelLabel}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           <div className="language-selector">
             <LanguageSelect
@@ -382,6 +470,38 @@ function App() {
               ))}
             </select>
           </div>
+
+          {grammarModelStatus === "not_installed" && (
+            <div className="download-section">
+              {pullingModel === selectedGrammarModel ? (
+                <>
+                  <div className="pull-info">
+                    <span className="pull-status">{pullProgress?.status || "Starting download..."}</span>
+                    {pullProgress?.percent != null && (
+                      <span className="pull-percent">{pullProgress.percent.toFixed(1)}%</span>
+                    )}
+                  </div>
+                  <div className="pull-progress">
+                    <div
+                      className="pull-progress-bar"
+                      style={{ width: `${pullProgress?.percent ?? 0}%` }}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="download-text">{selectedGrammarModelLabel} is not installed</span>
+                  <button
+                    onClick={() => handlePullModel(selectedGrammarModel)}
+                    className="download-button"
+                    disabled={pullingModel !== null}
+                  >
+                    Download {selectedGrammarModelLabel}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
 
           <div className="grammar-lang-selector">
             <label>Language</label>
