@@ -267,6 +267,7 @@ function App() {
     <main className="app-container">
       <header className="app-header">
         <div className="header-left">
+          <img src="/locale.svg" alt="Locale" className="app-logo" />
           <h1>Locale</h1>
           <button
             type="button"

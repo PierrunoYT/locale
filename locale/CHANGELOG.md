@@ -8,7 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **App screenshots** – Added model download and grammar tab screenshots to README
+- **Custom logo design** – New Locale logo with green (#3bb172) brand color
+- **Header logo** – Logo displayed in app header (32px) next to app title
+- **Updated favicon** – Browser/app icon now uses Locale logo
+- **Complete icon set** – Generated all platform-specific icons using Tauri's built-in icon generator:
+  - Windows: .ico file and Store logos (all sizes)
+  - macOS: .icns file
+  - iOS: All required sizes (20x20 to 1024x1024)
+  - Android: All mipmap densities with adaptive icon support
+- **Icon generation documentation** – Added Icon Generation section to README with regeneration command
 
 ## [0.3.0] - 2026-02-27
 

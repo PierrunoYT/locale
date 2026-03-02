@@ -1,0 +1,15 @@
+{
+  "name": "locale-icons",
+  "version": "1.0.0",
+  "description": "Icon generation for Locale Tauri app",
+  "scripts": {
+    "generate-icons": "node generate-all-icons.js",
+    "generate-tauri": "node generate-tauri-icons.js && node generate-ico-icns.js",
+    "generate-web": "node generate-icons.js"
+  },
+  "devDependencies": {
+    "png2icons": "^2.0.1",
+    "sharp": "^0.34.5",
+    "to-ico": "^1.1.5"
+  }
+}

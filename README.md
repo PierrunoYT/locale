@@ -49,6 +49,24 @@ A minimal, local translation and grammar correction application built with Tauri
 - **Disk Space**: 10GB free (for model storage)
 - **OS**: Windows, macOS, or Linux
 
+## Icon Generation
+
+To regenerate all app icons from the logo SVG:
+
+```bash
+cd locale
+npm run tauri icon ../locale.svg
+```
+
+This generates all required icons for all platforms:
+- Windows (.ico, Store logos)
+- macOS (.icns)
+- iOS (all sizes)
+- Android (all densities)
+- Standard PNG icons
+
+The icons are automatically placed in `locale/src-tauri/icons/` and configured in `tauri.conf.json`.
+
 ## Quick Start
 
 ### 1. Install Ollama

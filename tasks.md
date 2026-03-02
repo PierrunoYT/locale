@@ -101,6 +101,13 @@ A record of the tasks completed to build this project.
 - [x] Configure icon paths in `tauri.conf.json` bundle settings
 - [x] Set window title to "Locale"
 - [x] Set HTML page title to "Locale"
+- [x] Design and create Locale logo SVG with green (#3bb172) brand color
+- [x] Generate all platform icons using Tauri's built-in icon generator
+- [x] Add logo to app header with 32px size
+- [x] Update favicon to use Locale logo
+- [x] Generate Windows Store logos (all sizes)
+- [x] Generate Android icons (all mipmap densities with adaptive icon support)
+- [x] Generate iOS icons (all required sizes from 20x20 to 1024x1024)
 
 ## 10. Project Rename (LocalTranslate → Locale)
 
